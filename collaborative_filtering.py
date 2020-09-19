@@ -9,3 +9,6 @@ from get_data import(
 import warnings
 warnings.filterwarnings('ignore')
 
+class CF(object):
+    """Docstring for DF"""
+    
