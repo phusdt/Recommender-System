@@ -45,3 +45,22 @@ def get_items_data():
     items = pd.read_csv('./ml-100k/u.item', sep='|', names=_item_cols, encoding='latin-1')
 
     return items
+
+def get_rating_test_data():
+    """
+    Get rating_test data
+    Output: data frame rating_test
+    """
+    _rating_cols = ['user_id', 'item_id', 'rating', 'timestamp']
+    rating_test = pd.read_csv('/ml-100k/u2.test', sep='\t', names=_rating_cols, encoding='latin-1')
+    
+    return rating_test 
+
+def get_rating_base_data():
+    """
+    Get rating_base data
+    Output: dataframe rating_base
+    """
+    _rating_cols = ['user_id', 'item_id', 'rating', 'timestamp']
+    rating_base = pd.read_csv('./ml-100k/u2.base', sep='\t', names=_rating_cols, encoding='latin-1')
+    return rating_base
