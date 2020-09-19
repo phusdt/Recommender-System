@@ -124,4 +124,6 @@ class CF(object):
         Display all items which should be recommend for each user
         """
         for u in range(self.u_users):
-            
+            predicted_ratings = self.recommend(u)
+            predicted_ratings = predicted_ratings[predicted_ratings[:, 2]].argsort
+            print('Recommendation: {0} for user {1}'.format(predicted_ratings[:, 1], u))
