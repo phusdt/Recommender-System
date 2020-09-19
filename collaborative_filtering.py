@@ -118,4 +118,10 @@ class CF(object):
                     new_row = [u, i, predicted]
                     predicted_ratings.append(new_row)
         return np.asarray(predicted_ratings).astype('float64')
-        
+
+    def display(self):
+        """
+        Display all items which should be recommend for each user
+        """
+        for u in range(self.u_users):
+            
