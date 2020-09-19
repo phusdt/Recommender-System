@@ -22,4 +22,37 @@ class CF(object):
 
         self.Ybar_data = None #normalized
     
-    
+    def _normalize_Y(self):
+        """
+        Normalize data rating of users
+        """
+        self.Ybar_data = self.Y_data.copy().astype("float64")
+        users = self.Y_data[:, 0]  # all users - first col of the Y_data
+
+        self.Ybar_data = self.Y_data.copy()
+        self.mu = np.zeros((self.n_users,))
+
+        for n in range(self.n_users):
+            # row indices of rating done by user n
+            # since indices need to be integers, we need to convert
+            ids = np.where(users == n)[0].astype(np.int32)
+
+            # and the corresponding ratings
+            ratings = self.Y_data[ids, 2]
+
+            # take mean
+            m = np.mean(ratings)
+            if np.isnan(m):
+                m = 0  # to avoid empty array and nan value
+            self.mu[n] = m
+
+            # normalize
+            self.Ybar_data[ids, 2] = ratings - self.mu[n]
+        
+        self.Ybar = sparse.coo_matrix(
+            (self.Ybar_data[:, 2], (self.Ybar_data[:, 1], self.Ybar_data[:, 0]))
+            (self.n_items, self.n_users),
+        )
+        self.Ybar = self.Ybar.tocsr()
+
+
