@@ -112,3 +112,10 @@ class CF(object):
         items_rated_by_u = self.Y_data[ids, 1].tolist()
         predicted_ratings = []
         for i in range(self.n_items):
+            if i not in items_rated_by_u:
+                predicted = self.pred(u, i)
+                if predicted > 0:
+                    new_row = [u, i, predicted]
+                    predicted_ratings.append(new_row)
+        return np.asarray(predicted_ratings).astype('float64')
+        
