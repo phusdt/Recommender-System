@@ -93,7 +93,7 @@ class CF(object):
 
         # step 3: find similarity btw the current user and others
         # who already rated i
-        sim = self.S[u, users-rated_i]
+        sim = self.S[u, users_rated_i]
 
         # step 4: find the k most similarity users
         a = np.argsort(sim)[-self.k:]
@@ -103,4 +103,4 @@ class CF(object):
         r = self.Ybar[i, users_rated_i[a]]
         return (r * nearest_s)[0] / (np.abs(nearest_s).sum() + 1e-8) + self.mu[u]
     
-    
+
