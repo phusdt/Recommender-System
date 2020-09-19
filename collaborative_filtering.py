@@ -81,4 +81,26 @@ class CF(object):
         self._normalize_Y()
         self._calc_similarity()
     
+    def pred(self, u, i):
+        """
+        Predict the rating of user u for item i
+        """
+        # step 1: find all user who rated i
+        ids = np.where(self.Y_data[:, 1] == i)[0].astype(np.int32)
+
+        # step 2:
+        users_rated_i = (self.Y_data[ids, 0]).astype(np.int32)
+
+        # step 3: find similarity btw the current user and others
+        # who already rated i
+        sim = self.S[u, users-rated_i]
+
+        # step 4: find the k most similarity users
+        a = np.argsort(sim)[-self.k:]
+        # and the corresponding similarity levels
+        nearest_s = sim[a]
+        # how đi each of 'near' users  rated item i
+        r = self.Ybar[i, users_rated_i[a]]
+        return (r * nearest_s)[0] / (np.abs(nearest_s).sum() + 1e-8) + self.mu[u]
+    
     
