@@ -72,5 +72,13 @@ class CF(object):
                     sims.append(sim[0])
             self.S.append(sims)
         self.S = np.round(np.asarray(self.S).astype('float'), 2)
-        
 
+    def fit(self):
+        """
+        Normalize data and calculate similarity matrix again
+        (after some few ratings added)
+        """
+        self._normalize_Y()
+        self._calc_similarity()
+    
+    
