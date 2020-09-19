@@ -26,7 +26,7 @@ class CF(object):
         """
         Normalize data rating of users
         """
-        self.Ybar_data = self.Y_data.copy().astype("float64")
+        self.Ybar_data = self.Y_data.copy().astype('float64')
         users = self.Y_data[:, 0]  # all users - first col of the Y_data
 
         self.Ybar_data = self.Y_data.copy()
@@ -48,11 +48,29 @@ class CF(object):
 
             # normalize
             self.Ybar_data[ids, 2] = ratings - self.mu[n]
-        
+
         self.Ybar = sparse.coo_matrix(
-            (self.Ybar_data[:, 2], (self.Ybar_data[:, 1], self.Ybar_data[:, 0]))
+            (self.Ybar_data[:, 2], (self.Ybar_data[:, 1], self.Ybar_data[:, 0])),
             (self.n_items, self.n_users),
         )
-        self.Ybar = self.Ybar.tocsr()
 
+        self.Ybar = self.Ybar.tocsr()
+    
+    def _calc_similarity(self):
+        """
+        Calculate sim values of user with all users
+        """
+        Ybar_copy = self.Ybar.copy().toarray()
+        self.S = []
+        for u in range(self.n_users):
+            sims = []
+            for n in range(self.n_users):
+                sim = pearsonr(Y_bar_copy[u, :], Ybar_copy[n, :])
+                if np.isnan(sim[0]):
+                    sims.append(0)
+                else:
+                    sims.append(sim[0])
+            self.S.append(sims)
+        self.S = np.round(np.asarray(self.S).astype('float'), 2)
+        
 
