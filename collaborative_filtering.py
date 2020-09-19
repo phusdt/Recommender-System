@@ -102,5 +102,13 @@ class CF(object):
         # how đi each of 'near' users  rated item i
         r = self.Ybar[i, users_rated_i[a]]
         return (r * nearest_s)[0] / (np.abs(nearest_s).sum() + 1e-8) + self.mu[u]
-    
-
+    def recommend(self, u):
+        """
+        The decision is made based on all i such that:
+        self.pred(u, i) > 0. Suppose we are considering items which
+        have not been rated by u yet
+        """
+        ids = np.where(self.Y_data[:, 0] == u)[0]
+        items_rated_by_u = self.Y_data[ids, 1].tolist()
+        predicted_ratings = []
+        for i in range(self.n_items):
