@@ -52,7 +52,7 @@ def get_rating_test_data():
     Output: data frame rating_test
     """
     _rating_cols = ['user_id', 'item_id', 'rating', 'timestamp']
-    rating_test = pd.read_csv('/ml-100k/u2.test', sep='\t', names=_rating_cols, encoding='latin-1')
+    rating_test = pd.read_csv('./ml-100k/u2.test', sep='\t', names=_rating_cols, encoding='latin-1')
     
     return rating_test 
 
