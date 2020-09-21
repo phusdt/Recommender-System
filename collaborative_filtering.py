@@ -126,32 +126,33 @@ class CF(object):
             predicted_ratings = predicted_ratings[predicted_ratings[:, 2]].argsort
             print('Recommendation: {0} for user {1}'.format(predicted_ratings[:, 1], u))
 
-################################################################################################################################            
-RATE_TRAIN = get_rating_base_data().values # convert to matrix
-RATE_TEST = get_rating_test_data().values # convert to matrix
+################################################################################################################################     
+if __name__ == '__main__':       
+    RATE_TRAIN = get_rating_base_data().values # convert to matrix
+    RATE_TEST = get_rating_test_data().values # convert to matrix
 
-RATE_TRAIN[:, :2] -= 1 # start from 0
-RATE_TEST[:, :2] -= 1
+    RATE_TRAIN[:, :2] -= 1 # start from 0
+    RATE_TEST[:, :2] -= 1
 
-CF = CF(RATE_TRAIN, k=25)
-CF.fit()
+    CF = CF(RATE_TRAIN, k=25)
+    CF.fit()
 
-print('Similar Matrix Works')
-print(CF.S)
-print('Number of rows: ', CF.S.shape[0])
-print('Number of columns: ', CF.S.shape[1])
+    print('Similar Matrix Works')
+    print(CF.S)
+    print('Number of rows: ', CF.S.shape[0])
+    print('Number of columns: ', CF.S.shape[1])
 
-ids = np.where(RATE_TEST[:, 0] == 0)[0].astype('int32')
-real_items_1 = RATE_TEST[(np.where((RATE_TEST[:, 0] == 0) & (RATE_TEST[:, 2] >= 3)))]
-predicted_items = []
+    ids = np.where(RATE_TEST[:, 0] == 0)[0].astype('int32')
+    real_items_1 = RATE_TEST[(np.where((RATE_TEST[:, 0] == 0) & (RATE_TEST[:, 2] >= 3)))]
+    predicted_items = []
 
-for row in RATE_TEST[ids, :]:
-    predicted_rating = CF.pred(0, row[1])
-    if predicted_rating >= 3:
-        predicted_items.append(row[1])
+    for row in RATE_TEST[ids, :]:
+        predicted_rating = CF.pred(0, row[1])
+        if predicted_rating >= 3:
+            predicted_items.append(row[1])
 
-print('Items which user 1 actually like: ', real_items_1[:, 1])
-print('Items in prediction which user 1 might like ', predicted_items)
+    print('Items which user 1 actually like: ', real_items_1[:, 1])
+    print('Items in prediction which user 1 might like ', predicted_items)
 
 
     
