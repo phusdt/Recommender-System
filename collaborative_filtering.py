@@ -155,7 +155,7 @@ print('Items in prediction which user 1 might like ', predicted_items)
 
 
 n_test = RATE_TEST.shape[0]
-correct_itens_count = 0
+correct_items_count = 0
 real_items_user_like_count = len(np.where(RATE_TEST[:, 2] >= 3)[0].astype(np.int32))
 
 user_id = 0
@@ -165,8 +165,7 @@ while user_id < CF.n_users:
     for row in RATE_TEST[ids, :]:
         predicted_rating = CF.pred(user_id, row[1])
         if predicted_rating >= 3 and row[1] in real_items:
-            correct_itens_count += 1
+            correct_items_count += 1
     user_id += 1
 
-print('The accuracy of Collaborative Filtering: {0}/{1} '.format(correct_items_count
-                                                                ,real_items_user_like_count))
+print('The accuracy of Collaborative Filtering: {0}/{1} '.format(correct_items_count, real_items_user_like_count))
