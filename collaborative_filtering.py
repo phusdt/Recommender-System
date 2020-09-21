@@ -168,4 +168,5 @@ while user_id < CF.n_users:
             correct_itens_count += 1
     user_id += 1
 
-print('The accuracy of Collaborative Filtering: ')
+print('The accuracy of Collaborative Filtering: {0}/{1} '.format(correct_items_count
+                                                                ,real_items_user_like_count))
