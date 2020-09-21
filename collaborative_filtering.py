@@ -65,13 +65,13 @@ class CF(object):
         for u in range(self.n_users):
             sims = []
             for n in range(self.n_users):
-                sim = pearsonr(Y_bar_copy[u, :], Ybar_copy[n, :])
+                sim = pearsonr(Ybar_copy[u, :], Ybar_copy[n, :])
                 if np.isnan(sim[0]):
                     sims.append(0)
                 else:
                     sims.append(sim[0])
             self.S.append(sims)
-        self.S = np.round(np.asarray(self.S).astype('float'), 2)
+        self.S = np.round(np.asarray(self.S).astype("float"), 2)
 
     def fit(self):
         """
