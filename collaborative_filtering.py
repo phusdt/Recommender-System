@@ -85,23 +85,21 @@ class CF(object):
         """
         Predict the rating of user u for item i
         """
-        # step 1: find all user who rated i
+        # Step 1: find all users who rated i
         ids = np.where(self.Y_data[:, 1] == i)[0].astype(np.int32)
-
-        # step 2:
+        # Step 2:
         users_rated_i = (self.Y_data[ids, 0]).astype(np.int32)
-
-        # step 3: find similarity btw the current user and others
+        # Step 3: find similarity btw the current user and others
         # who already rated i
         sim = self.S[u, users_rated_i]
-
-        # step 4: find the k most similarity users
+        # Step 4: find the k most similarity users
         a = np.argsort(sim)[-self.k:]
         # and the corresponding similarity levels
         nearest_s = sim[a]
-        # how đi each of 'near' users  rated item i
+        # How did each of 'near' users rated item i
         r = self.Ybar[i, users_rated_i[a]]
         return (r * nearest_s)[0] / (np.abs(nearest_s).sum() + 1e-8) + self.mu[u]
+
     def recommend(self, u):
         """
         The decision is made based on all i such that:
@@ -149,11 +147,11 @@ if __name__ == "__main__":
     predicted_items = []
 
     for row in RATE_TEST[ids, :]:
-        predicted_rating = CF.pred(0, row[1])
+        predicted_rating = CF.pred(row[0], row[1])
         if predicted_rating >= 3:
             predicted_items.append(row[1])
 
     print('Items which user 1 actually like: ', real_items_1[:, 1])
     print('Items in prediction which user 1 might like ', predicted_items)
-    
+
     
