@@ -3,7 +3,7 @@ import pandas as pd
 from scipy import sparse
 from sklearn.metrics.pairwise import cosine_similarity
 from get_data import (
-    get_users_data,
+    get_user_data,
     get_rating_base_data,
     get_rating_test_data,
 )
@@ -63,3 +63,22 @@ class DF(object):
                 )
             )
         )
+        # self.users_features['male'] = self.users_features['sex'].map({'M': "1", 'F': "0"})
+        self.users_features.drop(["zip_code", "sex"], axis=1, inplace=True)  # we dont need it
+
+        # The get_dummies() function is used to convert categorical variable
+        # into dummy/indicator variables.
+        self.users_features = pd.get_dummies(
+            self.users_features, columns=["age", "occupation"]
+        )
+        # i set index of users_features dataframe is user_id
+        self.users_features.set_index("user_id", inplace=True)
+        
+    def _calc_similarity(self):
+        """
+        calculate sim values of user with all users
+        """
+        # now i convert from dataframe to array for calculate cosine
+        self.users_features = self.users_features.to_numpy()
+        # calculate similarity
+        self.similarities = self.dist_func(self.users_features, self.users_features)
