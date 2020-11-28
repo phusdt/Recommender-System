@@ -15,7 +15,7 @@ class Perceptron:
         self.n_iters = n_iters
         self.w1 = random.uniform(0, 1)
         self.w2 = random.uniform(0, 1)
-        
+
     def fit(self):
 
         n = self.dataset[0, 0] * self.w1 + self.dataset[0, 1] * self.w2
@@ -31,3 +31,11 @@ class Perceptron:
                 self.w2 = w2_stamp
 
             n = self.dataset[i, 0] * self.w1 + self.dataset[i, 1] * self.w2
+        
+    def predict(self):
+        """Predict rating based on w"""
+        new_predicted_ratings = []
+        for row in self.dataset:
+            new_predicted_rating = row[0] * self.w1 + row[1] * self.w2
+            new_predicted_ratings.append(new_predicted_rating)
+        return new_predicted_ratings
