@@ -115,3 +115,12 @@ class DF(object):
             (self.n_items, self.n_users),
         )
         self.Ybar = self.Ybar.tocsr()
+        
+    def fit(self):
+        """
+        Normalize data and calculate similarity matrix again (after
+        some few ratings added)
+        """
+        self._get_users_features()
+        self._calc_similarity()
+        self._normalize_Y()
