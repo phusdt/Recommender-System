@@ -115,7 +115,7 @@ class DF(object):
             (self.n_items, self.n_users),
         )
         self.Ybar = self.Ybar.tocsr()
-        
+
     def fit(self):
         """
         Normalize data and calculate similarity matrix again (after
@@ -124,3 +124,24 @@ class DF(object):
         self._get_users_features()
         self._calc_similarity()
         self._normalize_Y()
+    
+    def pred(self, u, i):
+        """
+        predict the rating tof user u for item i
+        """
+        # find users rated i
+        users_rated_i = (self.Y_data[ids, 0]).astype(np.int32)
+
+        # find similarity btw current user and others
+        # who rated i
+        sim = self.similarities[u, users_rated_i]
+
+        # find the k most similarity users
+        a = np.argmax(sim)[-self.k:]
+
+        nearest_s = sim[a]/len(a)
+
+        # ratings of nearest users rated item i
+        r = self.Ybar[i, users_rated_i[a]]
+
+        return (r * nearest_s)[0] / (np.abs(nearest_s).sum() + 1e-8) + self.mu[u]
