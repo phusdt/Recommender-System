@@ -130,6 +130,7 @@ class DF(object):
         predict the rating tof user u for item i
         """
         # find users rated i
+        ids = np.where(self.Y_data[:, 1] == i)[0].astype(np.int32)
         users_rated_i = (self.Y_data[ids, 0]).astype(np.int32)
 
         # find similarity btw current user and others
@@ -137,9 +138,9 @@ class DF(object):
         sim = self.similarities[u, users_rated_i]
 
         # find the k most similarity users
-        a = np.argmax(sim)[-self.k:]
+        a = np.argsort(sim)[-self.k:]
 
-        nearest_s = sim[a]/len(a)
+        nearest_s = sim[a]
 
         # ratings of nearest users rated item i
         r = self.Ybar[i, users_rated_i[a]]
