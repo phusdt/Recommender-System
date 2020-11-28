@@ -8,4 +8,5 @@ from get_data import (
 
 
 class Perceptron:
-    def __init__(self
+    def __init__(self):
+        pass
