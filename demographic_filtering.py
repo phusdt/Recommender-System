@@ -172,3 +172,49 @@ class DF(object):
             predicted_ratings = self.recommend(u)
             predicted_ratings = predicted_ratings[predicted_ratings[:, 2].argsort(kind='quicksort')[::-1]]
             print("Recommendation: {0} for user {1}".format(predicted_ratings[:, 1], u))
+
+######################################################################################
+USERS = get_users_data()
+RATE_TRAIN = get_rating_base_data().values
+RATE_TEST = get_rating_test_data().values
+
+
+RATE_TRAIN[:, :2] -= 1  # start from 0
+RATE_TEST[:, :2] -= 1  # start from 0
+
+DF = DF(USERS, RATE_TRAIN, 25)
+DF.fit()
+
+# print("Ma trận tương đồng thông tin")
+# print(DF.similarities)
+# print("Số hàng của ma trận:", DF.similarities.shape[0])
+# print("Số cột của ma trận: ", DF.similarities.shape[1])
+
+# ids = np.where(RATE_TEST[:, 0] == 0)[0].astype("int32")
+# real_items_1 = RATE_TEST[(np.where((RATE_TEST[:, 0] == 0) & (RATE_TEST[:, 2] >= 3)))]
+# correct_predicted_items = []
+
+# for row in RATE_TEST[ids, :]:
+#     predicted_rating = DF.pred(0, row[1])
+#     if predicted_rating >= 3 and row[1] in real_items_1:
+#         correct_predicted_items.append(row[1])
+
+
+# print("Những items user 1 thật sự thích       : ", real_items_1[:, 1])
+# print("Những items user 1 được dự đoán thích  : ", correct_predicted_items)
+
+# n_test = RATE_TEST.shape[0]
+# correct_items_count = 0
+# real_items_user_like_count = len(np.where(RATE_TEST[:, 2] >= 3)[0].astype(np.int32))
+
+# user_id = 0
+# while user_id < DF.n_users:
+#     ids = np.where(RATE_TEST[:, 0] == user_id)[0].astype("int32")
+#     real_items = RATE_TEST[(np.where((RATE_TEST[:, 0] == user_id) & (RATE_TEST[:, 2] >= 3)))]
+#     for row in RATE_TEST[ids, :]:
+#         predicted_rating = DF.pred(user_id, row[1])
+#         if predicted_rating >= 3 and row[1] in real_items:
+#             correct_items_count = correct_items_count + 1
+#     user_id = user_id + 1
+
+# print("Độ chính xác của Demographic Filtering :", correct_items_count / real_items_user_like_count)
