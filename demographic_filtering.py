@@ -163,3 +163,12 @@ class DF(object):
                     new_row = [u, i, predicted]
                     predicted_ratings.append(new_row)
         return np.asarray(predicted_ratings).astype("float64")
+    
+    def display(self):
+        """
+        Display all items which should be recommend for each user
+        """
+        for u in range(self.n_users):
+            predicted_ratings = self.recommend(u)
+            predicted_ratings = predicted_ratings[predicted_ratings[:, 2].argsort(kind='quicksort')[::-1]]
+            print("Recommendation: {0} for user {1}".format(predicted_ratings[:, 1], u))
