@@ -23,3 +23,14 @@ class DF(object):
         self.n_items = int(np.max(self.Y_data[:, 1])) + 1
 
         self.Ybar_data = None
+    def _get_users_features(self):
+        """
+        convert demographic data of user to binary
+        """
+        self.users_features = self.users.copy()
+        # First convert sex: if M == 1 else F == 0
+        self.users_features["sex"] = self.users_features.sex.map(
+            lambda x: 1.0 * (x == "M")
+        )
+        self.users_features["male"] = np.where(self.users_features["sex"] == 1.0, 1.0, 0.0)
+        self.users_features["female"] = np.where(self.users_features["sex"] == 0.0, 1.0, 0.0)
