@@ -174,7 +174,7 @@ class DF(object):
             print("Recommendation: {0} for user {1}".format(predicted_ratings[:, 1], u))
 
 ######################################################################################
-USERS = get_users_data()
+USERS = get_user_data()
 RATE_TRAIN = get_rating_base_data().values
 RATE_TEST = get_rating_test_data().values
 
