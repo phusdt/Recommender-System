@@ -34,3 +34,32 @@ class DF(object):
         )
         self.users_features["male"] = np.where(self.users_features["sex"] == 1.0, 1.0, 0.0)
         self.users_features["female"] = np.where(self.users_features["sex"] == 0.0, 1.0, 0.0)
+        # Then i convert age follow:
+        # 1:  "Under 18"
+        # 18:  "18-24"
+        # 25:  "25-34"
+        # 35:  "35-44"
+        # 45:  "45-49"
+        # 50:  "50-55"
+        # 56:  "56+"
+        self.users_features["age"] = self.users_features.age.map(
+            lambda x: 1
+            if int(x) >= 1 and int(x) < 18
+            else (
+                18
+                if int(x) >= 18 and int(x) < 25
+                else (
+                    25
+                    if int(x) >= 25 and int(x) < 35
+                    else (
+                        35
+                        if int(x) >= 35 and int(x) < 45
+                        else (
+                            45
+                            if int(x) >= 45 and int(x) < 50
+                            else (50 if int(x) >= 50 and int(x) < 56 else 56)
+                        )
+                    )
+                )
+            )
+        )
