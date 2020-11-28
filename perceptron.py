@@ -1,7 +1,7 @@
 import numpy as np
 import random
-from get_data import (
-    get_users_data,
+from get_data import(
+    get_user_data,
     get_rating_base_data,
     get_rating_test_data,
 )
@@ -20,8 +20,8 @@ class Perceptron:
 
         for i in range(1, self.n_iters):
             # update weight
-            w1_stamp = self.w1 + self.learning_rate * self.dataset[i - 1, 0] * (dataset[i - 1, 2] - n)
-            w2_stamp = self.w2 + self.learning_rate * self.dataset[i - 1, 1] * (dataset[i - 1, 2] - n)
+            w1_stamp = self.w1 + self.learning_rate * self.dataset[i - 1, 0] * (self.dataset[i - 1, 2] - n)
+            w2_stamp = self.w2 + self.learning_rate * self.dataset[i - 1, 1] * (self.dataset[i - 1, 2] - n)
             if np.abs(self.w1 - w1_stamp) <= 0.0001 and np.abs(self.w2 - w2_stamp) <= 0.0001:
                 break
             else:
