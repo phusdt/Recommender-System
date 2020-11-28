@@ -1,7 +1,5 @@
 import numpy as np
 import random
-from collaborative_filtering import *
-from demographic_filtering import *
 from get_data import (
     get_users_data,
     get_rating_base_data,
@@ -39,35 +37,3 @@ class Perceptron:
             new_predicted_rating = row[0] * self.w1 + row[1] * self.w2
             new_predicted_ratings.append(new_predicted_rating)
         return new_predicted_ratings
-
-#######################################################################################
-
-ids = np.where(RATE_TEST[:, 0] == 0)[0].astype("int32")
-
-MATRIX_DF = []
-MATRIX_CF = []
-
-for row in RATE_TEST[ids, :]:
-    p_cf = CF.pred(0, row[1])
-    p_df = DF.pred(0, row[2])
-    MATRIX_CF.append([0, row[1], p_cf])
-    MATRIX_DF.append([0, row[1], p_df])
-MATRIX_CF = np.asarray(MATRIX_CF)
-MATRIX_DF = np.asarray(MATRIX_DF)
-
-CF_predicted = np.asanyarray(MATRIX_CF[:, 2])
-DF_predicted = MATRIX_DF[:, 2]
-true_rating = RATE_TEST[ids, 2]
-
-dataset = np.c_[CF_predicted, DF_predicted, true_rating]
-
-# print("Ma trận dự đoán đánh giá CF, DF, True Rating")
-# print(dataset)
-
-PLA = Perceptron(dataset, 0.003, len(ids))
-PLA.fit()
-predicted_ratings_pla = PLA.predict()
-
-print("Dự đoán đánh giá sau khi được điều chỉnh")
-print(np.round(predicted_ratings_pla, 3))
-
