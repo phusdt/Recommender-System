@@ -109,3 +109,9 @@ class DF(object):
 
             # normalize
             self.Ybar_data[ids, 2] = ratings.astype("float") - self.mu[n]
+
+        self.Ybar = sparse.coo_matrix(
+            (self.Ybar_data[:, 2], (self.Ybar_data[:, 1], self.Ybar_data[:, 0])),
+            (self.n_items, self.n_users),
+        )
+        self.Ybar = self.Ybar.tocsr()
