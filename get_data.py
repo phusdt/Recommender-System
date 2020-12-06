@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-def get_user_data():
+def get_users_data():
     """
     Get demographic data of users
     Output: matrix users

@@ -1,7 +1,7 @@
 import numpy as np
 import random
 from get_data import(
-    get_user_data,
+    get_users_data,
     get_rating_base_data,
     get_rating_test_data,
 )
