@@ -23,6 +23,7 @@ class DF(object):
         self.n_items = int(np.max(self.Y_data[:, 1])) + 1
 
         self.Ybar_data = None
+        
     def _get_users_features(self):
         """
         convert demographic data of user to binary
@@ -73,13 +74,16 @@ class DF(object):
         )
         # i set index of users_features dataframe is user_id
         self.users_features.set_index("user_id", inplace=True)
+        self.u = self.users_features
 
     def _calc_similarity(self):
         """
         calculate sim values of user with all users
         """
         # now i convert from dataframe to array for calculate cosine
+        
         self.users_features = self.users_features.to_numpy()
+        #self.users_features = self.users_features * 5
         # calculate similarity
         self.similarities = self.dist_func(self.users_features, self.users_features)
     
@@ -88,7 +92,7 @@ class DF(object):
         normalize data rating of users
         """
         self.Ybar_data = self.Y_data.copy()
-        self.Ybar_data[:, 2] = self.Ybar_data[:, 2].astype("float")
+        self.Ybar_data = self.Ybar_data.astype("float64")
 
         users = self.Y_data[:, 0]
         self.mu = np.zeros((self.n_users,))
@@ -108,7 +112,7 @@ class DF(object):
             self.mu[n] = m
 
             # normalize
-            self.Ybar_data[ids, 2] = ratings.astype("float") - self.mu[n]
+            self.Ybar_data[ids, 2] = ratings - self.mu[n]
 
         self.Ybar = sparse.coo_matrix(
             (self.Ybar_data[:, 2], (self.Ybar_data[:, 1], self.Ybar_data[:, 0])),
