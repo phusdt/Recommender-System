@@ -70,7 +70,7 @@ class RBM:
         # Approximate the gradients with the CD algorithm
         self.W += torch.mm(v0.t(), ph0) - torch.mm(vk.t(), phk)
 
-        # Add (difference, 0) for the tensor of 2 dimensions
+        # Add (difference, 0) for the tensor of 2 dime  nsions
         self.v_bias = torch.sum( v0 - vk, 0 )
         self.h_bias = torch.sum( ph0 - phk, 0) 
 
