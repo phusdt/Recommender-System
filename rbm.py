@@ -11,15 +11,15 @@ class RBM:
         """
 
         # Weight used for the probability of the visible units given the hidden units
-        self.W = torch.randn(n_h, n_v) # random normal distribution mean = 0, variance = 1
+        self.W = torch.nn.init.xavier_normal_(n_h, n_v) # random normal distribution mean = 0, variance = 1
 
         # Bias probability of the hidden units is actived, given the values of
         # the visible units ( p_h_given_v )
-        self.h_bias = torch.rand(1, n_h)
+        self.h_bias = torch.nn.init.xavier_normal_(1, n_h)
 
         # Bias probability of the visible units is activated, given the value of the
         # hidden units ( p_v_given_h )
-        self.v_bias = torch.rand(1, n_v)
+        self.v_bias = torch.nn.init.xavier_normal_(1, n_v)
     
     def sample_h(self, x):
         """
@@ -29,7 +29,7 @@ class RBM:
         """
 
         # Probability v is activated given that the value h is sigmoid( Wx + a )
-        wx = torch.mm(y, self.W.t())
+        wx = torch.mm(x, self.W.t())
 
         # Expand the mini-batch
         activation = wx + self.h_bias.expand_as(wx)
@@ -68,9 +68,9 @@ class RBM:
         """
 
         # Approximate the gradients with the CD algorithm
-        self.W += torch.mm(v0.t(), ph0) - torch.mm(vk.t(), phk)
+        self.W += (torch.mm(v0.t(), ph0) - torch.mm(vk.t(), phk)).t()
 
-        # Add (difference, 0) for the tensor of 2 dime  nsions
-        self.v_bias = torch.sum( v0 - vk, 0 )
-        self.h_bias = torch.sum( ph0 - phk, 0) 
+        # Add (difference, 0) for the tensor of 2 dimensions
+        self.v_bias = torch.sum((v0 - vk), 0)
+        self.h_bias = torch.sum((ph0 - phk), 0)
 
