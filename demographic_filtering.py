@@ -23,7 +23,7 @@ class DF(object):
         self.n_items = int(np.max(self.Y_data[:, 1])) + 1
 
         self.Ybar_data = None
-        
+
     def _get_users_features(self):
         """
         convert demographic data of user to binary
@@ -81,12 +81,12 @@ class DF(object):
         calculate sim values of user with all users
         """
         # now i convert from dataframe to array for calculate cosine
-        
+
         self.users_features = self.users_features.to_numpy()
         #self.users_features = self.users_features * 5
         # calculate similarity
         self.similarities = self.dist_func(self.users_features, self.users_features)
-    
+
     def _normalize_Y(self):
         """
         normalize data rating of users
@@ -128,7 +128,7 @@ class DF(object):
         self._get_users_features()
         self._calc_similarity()
         self._normalize_Y()
-    
+
     def pred(self, u, i):
         """
         predict the rating tof user u for item i
@@ -150,7 +150,7 @@ class DF(object):
         r = self.Ybar[i, users_rated_i[a]]
 
         return (r * nearest_s)[0] / (np.abs(nearest_s).sum() + 1e-8) + self.mu[u]
-    
+
     def recommend(self, u):
         """
         The decision is made based on all i such that:
@@ -167,7 +167,7 @@ class DF(object):
                     new_row = [u, i, predicted]
                     predicted_ratings.append(new_row)
         return np.asarray(predicted_ratings).astype("float64")
-    
+
     def display(self):
         """
         Display all items which should be recommend for each user
@@ -176,4 +176,42 @@ class DF(object):
             predicted_ratings = self.recommend(u)
             predicted_ratings = predicted_ratings[predicted_ratings[:, 2].argsort(kind='quicksort')[::-1]]
             print("Recommendation: {0} for user {1}".format(predicted_ratings[:, 1], u))
+    
+    def recommend_all_users(self, data):
+        """
+        Return matrix with predict and real rating for all user
+        """
+        result = np.empty((0, 3))
 
+        for user in list(set(data[:,0])):
+            # get 2d array rating of current user [u, i, rating]
+            ids = np.where(data[:, 0] == user)[0]
+            items_rated_by_u = data[ids]
+
+            # create empty 2d array predict rating of user
+            predict_ratings_u = np.empty((0, 3))
+
+            items_not_rate = [
+                x
+                for x in range(self.n_items)
+                if x not in items_rated_by_u[:, 1]
+            ]
+
+            for item in items_not_rate[:]:
+                predict_rating = self.pred(user, item)
+                # append new row predict rating data into array
+                predict_ratings_u = np.append(
+                    predict_ratings_u, [[user, item, predict_rating]], axis=0
+                )
+
+            # now we have real and predict rating of current user
+            # i will sort predict rating data and get top 100
+            # result : top 100 predict rating + real rating (from rate test data)
+
+            predict_ratings_u_sorted = predict_ratings_u[
+                predict_ratings_u[:, 2].argsort(kind="quicksort")[::-1][0:100]
+            ]
+            result = np.append(result, items_rated_by_u, axis=0)
+            result = np.append(result, predict_ratings_u_sorted, axis=0)
+
+        return result

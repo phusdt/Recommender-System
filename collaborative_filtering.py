@@ -1,6 +1,6 @@
 import numpy as np
 from scipy import sparse
-from scipy.stats import pearsonr 
+from scipy.stats import pearsonr
 from get_data import(
     get_rating_base_data,
     get_rating_test_data,
@@ -21,7 +21,7 @@ class CF(object):
         self.n_items = int(np.max(self.Y_data[:, 1])) + 1
 
         self.Ybar_data = None #normalized
-    
+
     def _normalize_Y(self):
         """
         Normalize data rating of users
@@ -55,7 +55,7 @@ class CF(object):
         )
 
         self.Ybar = self.Ybar.tocsr()
-    
+
     def _calc_similarity(self):
         """
         Calculate sim values of user with all users
@@ -80,7 +80,7 @@ class CF(object):
         """
         self._normalize_Y()
         self._calc_similarity()
-    
+
     def pred(self, u, i):
         """
         Predict the rating of user u for item i

@@ -29,7 +29,7 @@ class Perceptron:
                 self.w2 = w2_stamp
 
             n = self.dataset[i, 0] * self.w1 + self.dataset[i, 1] * self.w2
-        
+
     def predict(self):
         """Predict rating based on w"""
         new_predicted_ratings = []

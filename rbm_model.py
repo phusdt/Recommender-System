@@ -5,10 +5,8 @@ class RBM:
     ''' Implementation of the Restricted Boltzmann Machine for collaborative filtering. The model is based on the paper of
         Ruslan Salakhutdinov, Andriy Mnih and Geoffrey Hinton: https://www.cs.toronto.edu/~rsalakhu/papers/rbmcf.pdf
     '''
-
     def __init__(self, FLAGS):
-        '''Initialization of the model'''
-
+        '''Initialization of the model  '''
         self.FLAGS=FLAGS
         self.weight_initializer=model_helper._get_weight_init()
         self.bias_initializer=model_helper._get_bias_init()
@@ -18,7 +16,7 @@ class RBM:
     def init_parameter(self):
         ''' Initializes the weights and the bias parameters of the neural network.'''
 
-        with tf.variable_scope('Network_parameter'):
+        with tf.name_scope('Network_parameter'):
             self.W=tf.get_variable('Weights', shape=(self.FLAGS.num_v, self.FLAGS.num_h),initializer=self.weight_initializer)
             self.bh=tf.get_variable('hidden_bias', shape=(self.FLAGS.num_h), initializer=self.bias_initializer)
             self.bv=tf.get_variable('visible_bias', shape=(self.FLAGS.num_v), initializer=self.bias_initializer)
@@ -35,7 +33,7 @@ class RBM:
 
         with tf.name_scope('sampling_hidden_units'):
 
-            a=tf.nn.bias_add(tf.matmul(v,self.W), self.bh)
+            a=tf.nn.bias_add(tf.matmul(v, self.W), self.bh)
             p_h_v=tf.nn.sigmoid(a)
             h_=self._bernouille_sampling(p_h_v, shape=[self.FLAGS.batch_size, int(p_h_v.shape[-1])])
 
@@ -60,14 +58,15 @@ class RBM:
 
 
     def optimize(self, v):
-        """ Optimization step. Gibbs sampling, calculating of gradients and doing an update operation.
+        ''' Optimization step. Gibbs sampling, calculating of gradients and doing an update operation.
+
         @param v: visible nodes
         @return update operation
         @return accuracy
-        """
+        '''
 
         with tf.name_scope('optimization'):
-            v0, vk,ph0, phk, _=self._gibbs_sampling(v)
+            v0, vk, ph0, phk, _ = self._gibbs_sampling(v)
             dW,db_h,db_v=self._compute_gradients(v0, vk, ph0, phk)
             update_op =self._update_parameter(dW,db_h,db_v)
 
@@ -83,15 +82,18 @@ class RBM:
     def inference(self, v):
         '''Inference step. Training samples are used to activate the hidden neurons which are used for calculation of input neuron values.
         This new input values are the prediction, for already rated movies as well as not yet rated movies
+
         @param v: visible nodes
         @return sampled visible neurons (value 1 or 0 accroding to Bernouille distribution)
         '''
-        p_h_v = tf.nn.sigmoid(tf.nn.bias_add(tf.matmul(v,self.W),self.bh))
+        p_h_v=tf.nn.sigmoid(tf.nn.bias_add(tf.matmul(v,self.W), self.bh))
+        h_=self._bernouille_sampling(p_h_v, shape=[1,int(p_h_v.shape[-1])])
 
-        h_ = self._bernouille_sampling(p_h_v, shape=[1,int(p_h_v.shape[-1])])
-        p_v_h = tf.nn.sigmoid(tf.nn.bias_add(tf.matmul(h_,tf.transpose(self.W, [1,0])), self.bv))
-        v_ = self._bernouille_sampling(p_v_h, shape=[1,int(p_v_h.shape[-1])])
+        p_v_h=tf.nn.sigmoid(tf.nn.bias_add(tf.matmul(h_,tf.transpose(self.W, [1,0])), self.bv))
+        v_=self._bernouille_sampling(p_v_h, shape=[1,int(p_v_h.shape[-1])])
+
         return v_
+
 
     def _update_parameter(self,dW,db_h,db_v):
         ''' Creating TF assign operations. Updated weight and bias values are replacing old parameter values.
@@ -169,7 +171,7 @@ class RBM:
         return dW,dbh,dbv
 
 
-    def _gibbs_sampling(self, v):
+    def _gibbs_sampling(self, v0):
         ''' Perfroming the gibbs sampling.
 
         @param v: visible neurons
@@ -180,33 +182,33 @@ class RBM:
         '''
 
         #end condition for the while loop
-        def condition(i, vk, hk,v):
+        def condition(i, vk, hk, v0):
             r= tf.less(i,k)
             return r[0]
 
         #loop body
-        def body(i, vk, hk,v):
+        def body(i, vk, hk, v0):
 
             _,hk=self._sample_h(vk)
             _,vk=self._sample_v(hk)
 
-            vk=tf.where(tf.less(v,0),v,vk)
+            vk=tf.where(tf.less(v0, 0), v0, vk)
 
-            return [i+1, vk, hk,v]
+            return [i+1, vk, hk,v0]
 
-        ph0,_=self._sample_h(v)
+        ph0,_=self._sample_h(v0)
 
-        vk=v
+        vk=v0
         hk=tf.zeros_like(ph0)
 
         i = 0 # start counter for the while loop
         k=tf.constant([self.FLAGS.k]) # number for the end condition of the while loop
 
-        [i, vk,hk,v]=tf.while_loop(condition, body,[i, vk,hk,v])
+        [i, vk, hk, v0]=tf.while_loop(condition, body,[i, vk, hk, v0])
 
         phk,_=self._sample_h(vk)
 
-        return v, vk,ph0, phk, i
+        return v0, vk, ph0, phk, i
 
 
     def _bernouille_sampling(self,p, shape):
